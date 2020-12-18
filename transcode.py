@@ -9,7 +9,6 @@ def generateData(message):
 
     return li
 
-
 # pixels will be modified according to 8-bit binary 
 def pixel_mod(pix, message):
     messageList = generateData(message)
@@ -20,7 +19,7 @@ def pixel_mod(pix, message):
     for i in range(length):
         pix = [value for value in imageData.__next__()[:3] + imageData.__next__()[:3] + imageData.__next__()[:3]]
         
-        #making pixel value 1 for odd and 0 for even
+        # making pixel value 1 for odd and 0 for even
         for j in range(0, 8):
             if(messageList[i][j] == '0' and pix[j]%2 != 0):
                 pix[j] -= 1
@@ -31,7 +30,8 @@ def pixel_mod(pix, message):
             
                 else:
                     pix[j] += 1
-                
+         
+         # if 8th binary-bit is 0 then continue reading the messsage, if it is 1 then return the encoded image      
         if(i == length - 1):
             if(pix[-1] %2 == 0):
                 if(pix[-1] != 0):
@@ -44,6 +44,7 @@ def pixel_mod(pix, message):
             if(pix[-1] %2 != 0):
                 pix[-1] -= 1
 
+        # holds the entire RGB values in the form of tuple
         pix = tuple(pix)
         yield pix[0:3]
         yield pix[3:6]
@@ -94,9 +95,11 @@ def decode():
     imageData = iter(image.getdata())
     
     while(True):
+        # reading the 9 RGB values from the output image
         pix = [value for value in imageData.__next__()[:3] + imageData.__next__()[:3] + imageData.__next__()[:3]]
         binaryString = ''
         
+        #if RGB value is odd it'll return 1 to binary string, if it is even it'll return 0 
         for i in pix[:8]:
             if(i % 2 == 0):
                 binaryString += '0'
@@ -104,5 +107,7 @@ def decode():
                 binaryString += '1'
                 
         message += chr(int(binaryString, 2))
+        
+        # if 9th RGB value is odd it will return the encoded message
         if(pix[-1] %2 != 0):
             return message
